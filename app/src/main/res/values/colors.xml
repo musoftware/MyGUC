@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimaryDark">#00796b </color>
+    <color name="colorPrimary">#009688 </color>
+    <color name="colorAccent">#E57373</color>
+    <color name="ripple">#BB342F</color>
+    <color name="faculties_color">#f44336</color>
+    <color name="files_color">#FFEB3B</color>
+    <color name = "favs_color">#4CAF50</color>
+    <color name="gray">#696969</color>
+    <color name="simi_white">#ADAFB3</color>
+    <color name="black_semi_transparent">#B2000000</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="white">#FFFFFF</color>
+
+</resources>
