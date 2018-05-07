@@ -1,0 +1,73 @@
+<LinearLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    >
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1">
+
+
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/recycler_view"
+            />
+        <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/progress_wheel"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            app:barColor="@color/colorAccent"
+            app:progressIndeterminate = "true"
+            app:fillRadius="true"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/add"
+            android:scaleType="center"
+            android:tint="@android:color/white"
+            android:id="@+id/fab2"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:onClick="onFabClick"
+            app:fabSize="normal"
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible"
+            android:id="@+id/fab_layout"
+            >
+
+            <android.support.design.widget.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fab"
+                android:layout_centerInParent="true"
+                android:src="@mipmap/add"
+                android:scaleType="center"
+                android:tint="@android:color/white"
+                app:fabSize="mini"
+                android:onClick="onFabClick"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/fab"
+                android:layout_centerHorizontal="true"
+                android:text="Add your first subject"
+                android:textColor="@android:color/darker_gray"
+                />
+        </RelativeLayout>
+    </FrameLayout>
+</LinearLayout>
+
