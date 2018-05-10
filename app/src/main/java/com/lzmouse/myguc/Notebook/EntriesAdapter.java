@@ -197,11 +197,14 @@ public class EntriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case RECORD_TYPE:
                 RecordEntry recordEntry = (RecordEntry)entry;
                 RecordHolder recordHolder = (RecordHolder)h;
-                recordHolder.duration.setText(String.format("%02d min, %02d sec",
-                        TimeUnit.MILLISECONDS.toMinutes(recordEntry.getDuration(context)),
-                        TimeUnit.MILLISECONDS.toSeconds(recordEntry.getDuration(context)) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(recordEntry.getDuration(context)))
-                ));
+                if(recordEntry.getDuration(context) == -1)
+                    recordHolder.duration.setText("Recording...");
+                else
+                    recordHolder.duration.setText(String.format("%02d min, %02d sec",
+                            TimeUnit.MILLISECONDS.toMinutes(recordEntry.getDuration(context)),
+                            TimeUnit.MILLISECONDS.toSeconds(recordEntry.getDuration(context)) -
+                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(recordEntry.getDuration(context)))
+                    ));
                 recordHolder.title.setText(recordEntry.getName());
                 break;
             default:
@@ -328,7 +331,7 @@ public class EntriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if(duration == -1) {
                 MediaPlayer mp = MediaPlayer.create(context, Uri.parse(getRecordPath()));
                 if (mp == null)
-                    return 0;
+                    return -1;
                 setDuration(mp.getDuration());
             }
             return duration;
