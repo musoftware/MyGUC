@@ -23,25 +23,26 @@
            android:layout_toLeftOf = "@+id/fav"
            android:layout_centerVertical="true"
            android:padding="8dp">
-           <TextView
+           <me.grantland.widget.AutofitTextView
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text="Maths"
-               android:textSize="24dp"
+               android:textSize="24sp"
                android:textColor="@android:color/black"
                android:id="@+id/text"
-               android:ellipsize="end"
-               android:maxLines="1"
-               />
-           <TextView
+               android:ellipsize="middle"
+               app:minTextSize="15sp"
+               android:singleLine="true" />
+           <me.grantland.widget.AutofitTextView
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:text=".../.../..."
                android:textSize="12sp"
                android:textColor="@color/simi_white"
                android:id="@+id/path"
-               android:ellipsize="start"
-               android:singleLine="true" />
+               android:ellipsize="middle"
+               android:singleLine="true"
+               app:minTextSize="12sp"/>
        </LinearLayout>
 
        <com.like.LikeButton

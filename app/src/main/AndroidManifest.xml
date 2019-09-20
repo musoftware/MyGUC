@@ -3,14 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.lzmouse.myguc">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA" />
-
-
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
     <application xmlns:tools="http://schemas.android.com/tools"
         android:allowBackup="true"
         android:icon="@mipmap/ic_lan"
@@ -19,18 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
-        <provider
-            android:name="com.lzmouse.myguc.GenericFileProvider"
-            android:authorities="${applicationId}.my.package.name.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-
+        <activity android:name=".Intranet.DataActivity"></activity>
+        <activity android:name=".Intranet.MetActivity" />
         <activity
-            android:name="com.lzmouse.myguc.Main.MainActivity"
+            android:name=".Main.MainActivity"
             android:theme="@style/AppTheme.BrandedLaunch">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,11 +23,48 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.lzmouse.myguc.Intranet.IntranetActivity"
-            android:parentActivityName="com.lzmouse.myguc.Main.MainActivity" />
+            android:name=".Intranet.IntranetActivity"
+            android:parentActivityName=".Main.MainActivity" />
+        <activity
+            android:name=".Intranet.FilesActivity"
+            android:parentActivityName=".Main.MainActivity" />
+        <activity
+            android:name=".Login.LoginActivity"
+            android:parentActivityName=".Main.MainActivity" />
+        <activity
+            android:name=".Intranet.FavoritesActivity"
+            android:parentActivityName=".Main.MainActivity" />
+        <activity
+            android:name=".Notebook.NotebookActivity"
+            android:label="Notebook"
+            android:parentActivityName=".Main.MainActivity" />
+        <activity
+            android:name=".Notebook.SubjectActivity"
+            android:parentActivityName=".Notebook.NotebookActivity" />
+        <activity
+            android:name=".Notebook.EntryActivity"
+            android:parentActivityName=".Notebook.SubjectActivity"
+            android:theme="@style/EntryTheme" />
+        <activity
+            android:name=".IntroActivity"
+            android:theme="@style/Theme.Intro" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="43fe0158794c29e707905dc7e0832f9bcbd085df" />
+
+        <provider
+            android:name=".GenericFileProvider"
+            android:authorities="${applicationId}.my.package.name.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
         <receiver
-            android:name="com.lzmouse.myguc.Intranet.DownloadFileCLicked"
+            android:name=".Intranet.DownloadFileCLicked"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -51,43 +72,23 @@
                 <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
             </intent-filter>
         </receiver>
-
-        <service
-            android:name="com.lzmouse.myguc.Intranet.DownloadService"
-            android:exported="false" />
-
-        <activity
-            android:name="com.lzmouse.myguc.Intranet.FilesActivity"
-            android:parentActivityName="com.lzmouse.myguc.Main.MainActivity" />
-        <activity
-            android:name="com.lzmouse.myguc.Login.LoginActivity"
-            android:parentActivityName="com.lzmouse.myguc.Main.MainActivity" />
-        <activity
-            android:name="com.lzmouse.myguc.Intranet.FavoritesActivity"
-            android:parentActivityName="com.lzmouse.myguc.Main.MainActivity" />
-        <activity
-            android:name="com.lzmouse.myguc.Notebook.NotebookActivity"
-            android:label="Notebook"
-            android:parentActivityName="com.lzmouse.myguc.Main.MainActivity" />
-        <activity
-            android:name="com.lzmouse.myguc.Notebook.SubjectActivity"
-            android:parentActivityName="com.lzmouse.myguc.Notebook.NotebookActivity" />
-        <activity
-            android:name="com.lzmouse.myguc.Notebook.EntryActivity"
-            android:parentActivityName="com.lzmouse.myguc.Notebook.SubjectActivity"
-            android:theme="@style/EntryTheme" />
-        <activity
-            android:name="com.lzmouse.myguc.IntroActivity"
-            android:theme="@style/Theme.Intro" />
-
-        <service
-            android:name="com.lzmouse.myguc.Notebook.AudioRecordService"
-            android:exported="false" />
-
         <receiver
-            android:name="com.lzmouse.myguc.AudioBroadCastReciver"
+            android:name=".AudioBroadCastReciver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <service
+            android:name=".Intranet.DownloadService"
+            android:exported="false" />
+        <service
+            android:name=".Notebook.AudioRecordService"
+            android:exported="false" />
     </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
 </manifest>

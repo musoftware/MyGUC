@@ -69,12 +69,25 @@ public class PathsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private String name;
         private String path;
         private boolean showArrow;
+        private PathType type;
 
-        public Path(String name, String path, boolean showArrow) {
+        public Path(String name, String path, boolean showArrow, PathType type) {
             this.name = name;
             this.path = path;
-            this.showArrow=showArrow;
+            this.showArrow = showArrow;
+            this.type = type;
         }
+
+        public Path(String name, String path, boolean showArrow) {
+          this(name,path,showArrow,PathType.NORMAL);
+        }
+        public Path(String name, String path) {
+            this(name,path,false,PathType.NORMAL);
+        }
+        public Path(String name, String path,PathType type) {
+            this(name,path,false,type);
+        }
+
         public Path(Parcel in) {
             super();
             readFromParcel(in);
@@ -143,5 +156,21 @@ public class PathsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             dest.writeByte((byte) (showArrow ? 1 : 0));     //if myBoolean == true, byte == 1
 
         }
+    }
+    public static class ElemenalPath extends Path
+    {
+        private LinksAdapter.ElementType elementType;
+        public ElemenalPath(String name, String path, LinksAdapter.ElementType elementType) {
+            super(name, path, PathType.ELEMENTAL);
+            this.elementType = elementType;
+        }
+
+        public LinksAdapter.ElementType getElementType() {
+            return elementType;
+        }
+    }
+    public enum PathType
+    {
+        NORMAL,ELEMENTAL,COURSE
     }
 }

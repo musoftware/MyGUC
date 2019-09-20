@@ -8,11 +8,14 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.lzmouse.myguc.Helper;
 import com.lzmouse.myguc.Intranet.FavoritesActivity;
 import com.lzmouse.myguc.Intranet.FilesActivity;
 import com.lzmouse.myguc.Intranet.IntranetActivity;
+import com.lzmouse.myguc.Intranet.MetActivity;
 import com.lzmouse.myguc.IntroActivity;
 import com.lzmouse.myguc.Login.Student;
 import com.lzmouse.myguc.Login.LoginActivity;
@@ -20,6 +23,7 @@ import com.lzmouse.myguc.MyGucDatabaseHelper;
 import com.lzmouse.myguc.Notebook.NotebookActivity;
 import com.lzmouse.myguc.R;
 
+import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +37,15 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
     protected void onCreate(Bundle savedInstanceState)  {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         if(getSharedPreferences("INTRO",MODE_PRIVATE).getBoolean("IS_FIRST",true))
             startActivity(new Intent(this,IntroActivity.class));
         setContentView(R.layout.activity_main);
         List<MainAdapter.Item> items = new ArrayList<>();
         items.add(new MainAdapter.Item("Intranet",R.drawable.ic_fac));
         items.add(new MainAdapter.Item("Downloads",R.drawable.ic_download));
+        items.add(new MainAdapter.Item("MET",R.drawable.ic_met));
+        items.add(new MainAdapter.Item("IET",R.drawable.ic_circuit));
         items.add(new MainAdapter.Item("Favorites",R.drawable.ic_fav));
         items.add(new MainAdapter.Item("Notebook",R.drawable.ic_notebook));
         RecyclerView recyclerView =  findViewById(R.id.rec);
@@ -46,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
         MainAdapter adapter = new MainAdapter(this,this, items);
         recyclerView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-
-
     }
     private  enum LoginResult{SUCCESS,FAILED,FIRST_LOGIN};
     private class LoginTask extends AsyncTask<Void,Void,LoginResult>
@@ -196,11 +201,18 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
                 i =  new Intent(this, NotebookActivity.class);
                 break;
             case "Downloads":
-            default:
                 i =  new Intent(this, FilesActivity.class);
                 break;
-
+            case "MET":
+                i =  new Intent(this, MetActivity.class);
+                break;
+            case "IET":
+                i = null;
+                Toast.makeText(this,"Comming soon!",Toast.LENGTH_LONG).show();
+            default:
+                    i = null;
         }
-        startActivity(i);
+        if(i != null)
+            startActivity(i);
     }
 }

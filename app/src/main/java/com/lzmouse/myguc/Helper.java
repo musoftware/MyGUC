@@ -137,6 +137,23 @@ public class Helper {
         int digitGroups = (int) (Math.log10(buffer) / Math.log10(1024));
         return new DecimalFormat("#,##0.#").format(buffer / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
     }
+    public static File createNewFile(File file,String fullName)
+    {
+        int i=0;
+        String name = getNameWithoutExt(fullName);
+        String ext = "."+getExtension(fullName);
+        while( i < 99)
+        {
+            if(file.exists())
+            {
+                file =  new File(file.getParentFile(),name+ "_"+i + ext);
+                i++;
+            }
+            else
+                return file;
+        }
+        return file;
+    }
     public static Drawable getDrawable(Context context, int resId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             return context.getResources().getDrawable(resId, null);

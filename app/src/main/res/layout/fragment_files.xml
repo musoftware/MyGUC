@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/fab"
         android:layout_gravity="end|bottom"
-        android:src="@mipmap/add"
+        app:srcCompat="@mipmap/add"
         app:fab_size="normal"
         android:layout_margin="8dp"/>
     <com.pnikosis.materialishprogress.ProgressWheel

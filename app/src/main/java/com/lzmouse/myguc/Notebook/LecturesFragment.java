@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.lzmouse.myguc.Helper;
 import com.lzmouse.myguc.MyGucDatabaseHelper;
@@ -164,28 +165,29 @@ public class LecturesFragment extends Fragment implements LecturesAdapter.Listen
     @Override
     public void onDeleteClick(final LecturesAdapter.Lecture lecture, final int pos) {
         if (deleteTask == null) {
-            SweetAlertDialog dialog = new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText("Deep Deleting")
-                    .setContentText("Do you want to delete the files from the phone?")
-                    .setConfirmText("Yes")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            new MaterialDialog.Builder(context)
+                    .title("Deleting " + lecture.getName())
+                    .content("Are you sure you want to delete this entirely?")
+                    .positiveText("Yes")
+                    .negativeText("No,Only from the app")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
                             deleteTask = new DeleteTask();
                             deleteTask.execute(lecture, true, pos);
                         }
                     })
-                    .setCancelButton("No,Only delete from the app", new SweetAlertDialog.OnSweetClickListener() {
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
                             deleteTask =  new DeleteTask();
                             deleteTask.execute(lecture,false,pos);
                         }
-                    }).setCancelText("Cancel");
+                    })
+                    .show();
 
-            dialog.show();
         }
     }
     private  class DeleteTask extends AsyncTask<Object,Void,Void>

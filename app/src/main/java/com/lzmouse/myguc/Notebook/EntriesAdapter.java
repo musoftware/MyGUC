@@ -197,6 +197,7 @@ public class EntriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             case RECORD_TYPE:
                 RecordEntry recordEntry = (RecordEntry)entry;
                 RecordHolder recordHolder = (RecordHolder)h;
+
                 if(recordEntry.getDuration(context) == -1)
                     recordHolder.duration.setText("Recording...");
                 else
@@ -205,6 +206,7 @@ public class EntriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             TimeUnit.MILLISECONDS.toSeconds(recordEntry.getDuration(context)) -
                                     TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(recordEntry.getDuration(context)))
                     ));
+
                 recordHolder.title.setText(recordEntry.getName());
                 break;
             default:

@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                     boolean isUpdated = false;
                     if(dpHelper.getReadableDatabase()!=null) {
                         Cursor cursor = dpHelper.getReadableDatabase().query(MyGucDatabaseHelper.ACCOUNT_TABLE
-                                , new String[]{MyGucDatabaseHelper.USER_NAME_COL, MyGucDatabaseHelper.PASSWORD_COL}
+                                , new String[]{"_id",MyGucDatabaseHelper.USER_NAME_COL, MyGucDatabaseHelper.PASSWORD_COL}
                                 , null, null, null, null, null);
                         if (cursor.moveToFirst())
                         {

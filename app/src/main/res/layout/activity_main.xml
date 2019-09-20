@@ -15,7 +15,8 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="4dp"
         android:layout_marginTop="4dp"
-        android:src="@drawable/guc_main" />
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:srcCompat="@drawable/guc_main" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rec"

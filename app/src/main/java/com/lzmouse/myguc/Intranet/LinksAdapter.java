@@ -2,6 +2,7 @@ package com.lzmouse.myguc.Intranet;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.lzmouse.myguc.R;
+
+import org.jsoup.nodes.Element;
 
 import java.io.Serializable;
 import java.util.List;
@@ -113,7 +116,7 @@ public class LinksAdapter extends RecyclerView.Adapter<LinksAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         Link link = links.get(position);
         holder.name.setText(link.getName());
-        if(!link.isFile())
+        if(!link.isFile() && !(link instanceof ElementalLink) && !(link instanceof Course))
         {
             holder.fav.setVisibility(View.VISIBLE);
             holder.fav.setLiked(link.isFav());
@@ -176,5 +179,63 @@ public class LinksAdapter extends RecyclerView.Adapter<LinksAdapter.ViewHolder> 
         public String toString() {
             return name + "_" + link;
         }
+
+
+    }
+    public static class ElementalLink extends Link
+    {
+        private ElementType elementType;
+        private String div;
+        public ElementalLink(String name,String div,ElementType elementType,boolean isFav)
+        {
+            super(name,"",isFav,false);
+            this.div = div;
+            this.elementType = elementType;
+        }
+        public ElementalLink(String name,String div,ElementType elementType)
+        {
+          this(name,div,elementType,false);
+        }
+        public static ElementalLink fromElement(Element element,ElementType elementType)
+        {
+            String onClick = element.attr("onclick");
+            String[] funArgs = onClick.substring(14,onClick.indexOf(")")).split(",");
+
+            String div = funArgs[1]+funArgs[0];
+            div = div.replaceAll("\"","").replaceAll("\\+","").replaceAll(" ","");
+            Log.d("MET",div);
+            LinksAdapter.ElementalLink link =
+                    new LinksAdapter.ElementalLink(element.text(), div,elementType );
+            return link;
+        }
+
+        public String getDiv() {
+            return div;
+        }
+
+        public ElementType getElementType() {
+            return elementType;
+        }
+    }
+    public static class Course extends Link
+    {
+        private String id;
+        public Course(String name, String id,boolean isFav) {
+            super(name, "", isFav, false);
+            this.id = id;
+        }
+        public Course(String name ,String id)
+        {
+            this(name,id,false);
+        }
+
+        public String getId() {
+            return id;
+        }
+    }
+
+    public enum ElementType
+    {
+        STUDY_GROUP,MAJOR,SEMESTER
     }
 }

@@ -19,7 +19,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_fac"
+            app:srcCompat="@drawable/ic_fac"
             android:layout_above="@id/text"
             android:id="@+id/image"
             android:padding="4dp"

@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -36,6 +37,7 @@ public class DownloadService extends IntentService {
     }
 
     private static final int ID = 0;
+    private static final String CHANNEL = "DOWNLOAD_CHANNEL";
 
     private String url;
     private String name;
@@ -53,9 +55,24 @@ public class DownloadService extends IntentService {
             new DownloadTask().execute();
         }
     }
+    public void initChannels() {
+        if (Build.VERSION.SDK_INT < 26) {
+            return;
+        }
+        NotificationManager notificationManager =
+                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel(CHANNEL,
+                "Download Files",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setBypassDnd(true);
+        channel.setImportance(NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription("Notify user when downloading a file from intranet");
+        notificationManager.createNotificationChannel(channel);
+    }
     private void setupNotification() {
+        initChannels();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            builder = new NotificationCompat.Builder(this, NotificationChannel.DEFAULT_CHANNEL_ID);
+            builder = new NotificationCompat.Builder(this, CHANNEL);
         else
             builder = new NotificationCompat.Builder(this);
 
@@ -63,8 +80,7 @@ public class DownloadService extends IntentService {
                 .setContentTitle(name)
                 .setContentText("Downloading " + name)
                 .setProgress(0, 0, true)
-                .setOngoing(true)
-                .setDefaults(NotificationCompat.DEFAULT_LIGHTS);
+                .setOngoing(true);
         manager.notify(ID, builder.build());
 
     }
@@ -113,7 +129,7 @@ public class DownloadService extends IntentService {
                 Log.d(TAG, len + "");
                 File folder = new File(Environment.getExternalStorageDirectory(), "My Guc");
                 folder.mkdirs();
-                downloadFile = new File(folder.getAbsolutePath(), name);
+                downloadFile = Helper.createNewFile(new File(folder.getAbsolutePath(), name),name);
                 FileOutputStream fileOutputStream = new FileOutputStream(downloadFile);
                 fileOutputStream.write(arrayOutputStream.toByteArray());
                 fileOutputStream.close();
@@ -133,19 +149,23 @@ public class DownloadService extends IntentService {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0
-                    , Helper.getFileIntent(getApplicationContext(),downloadFile.getAbsolutePath(),Helper.getMimeType(downloadFile.getName()))
-                    ,PendingIntent.FLAG_UPDATE_CURRENT);
-            manager.notify(ID,builder.setProgress(0,0,false)
-                    .setContentTitle(name)
-                    .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                    .setAutoCancel(true)
-                    .setContentText("File Downloaded")
-                    .setContentIntent(pendingIntent)
-                    .setOngoing(false)
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setDefaults(NotificationCompat.DEFAULT_ALL)
-                    .build());
+            if(downloadFile != null) {
+                PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0
+                        , Helper.getFileIntent(getApplicationContext(), downloadFile.getAbsolutePath(), Helper.getMimeType(downloadFile.getName()))
+                        , PendingIntent.FLAG_UPDATE_CURRENT);
+                manager.notify(ID, builder.setProgress(0, 0, false)
+                        .setContentTitle(name)
+                        .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                        .setAutoCancel(true)
+                        .setContentText("File Downloaded")
+                        .setContentIntent(pendingIntent)
+                        .setOngoing(false)
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setDefaults(NotificationCompat.DEFAULT_ALL)
+                        .build());
+            }
+            else
+                manager.cancel(ID);
         }
     }
 

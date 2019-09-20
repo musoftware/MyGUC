@@ -27,6 +27,7 @@ import android.widget.PopupMenu;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.folderselector.FileChooserDialog;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.lzmouse.myguc.Helper;
@@ -41,7 +42,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntryActivity extends AppCompatActivity implements View.OnClickListener, EntriesAdapter.Listener {
+public class EntryActivity extends AppCompatActivity implements View.OnClickListener, EntriesAdapter.Listener,FileChooserDialog.FileCallback {
 
     public static final String SOURCE_PARAM = "source";
     public static final String COLOR_PARAM = "color";
@@ -89,6 +90,22 @@ public class EntryActivity extends AppCompatActivity implements View.OnClickList
             loadDataTask = new LoadDataTask();
             loadDataTask.execute();
         }
+    }
+
+    @Override
+    public void onFileSelection(@NonNull FileChooserDialog dialog, @NonNull File file) {
+        dialog.dismiss();
+        File folder = new File(Environment.getExternalStorageDirectory(),"My Guc Records");
+        folder.mkdirs();
+        String recordName = Helper.getNameWithoutExt(file.getName());
+        entry =  new EntriesAdapter.RecordEntry(0,lecture.getId(),"",
+                System.currentTimeMillis(),recordName,file.getAbsolutePath());
+        addEntry();
+    }
+
+    @Override
+    public void onFileChooserDismissed(@NonNull FileChooserDialog dialog) {
+
     }
 
     private class LoadDataTask extends AsyncTask<Void,Void,Void>
@@ -188,28 +205,46 @@ public class EntryActivity extends AppCompatActivity implements View.OnClickList
     private void addRecord()
     {
         new MaterialDialog.Builder(this)
-                .canceledOnTouchOutside(false)
-                .title("Give your record a name")
-                .input("Name", "", false, new MaterialDialog.InputCallback() {
+                .title("Add audio")
+                .positiveText("From phone")
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
-                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        new FileChooserDialog.Builder(EntryActivity.this)
+                                .mimeType("audio/*")
+                                .show(getSupportFragmentManager());
+                    }
+                })
+                .negativeText("Record voice")
+                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        new MaterialDialog.Builder(EntryActivity.this)
+                                .canceledOnTouchOutside(false)
+                                .title("Give your record a name")
+                                .input("Name", "", false, new MaterialDialog.InputCallback() {
+                                    @Override
+                                    public void onInput(@NonNull MaterialDialog dialog, CharSequence input) {
 
-                        File folder = new File(Environment.getExternalStorageDirectory(),"My Guc Records");
-                        folder.mkdirs();
-                        String recordName = input.toString();
-                        String recordPath = new File(folder.getAbsolutePath(),recordName+".wav").getAbsolutePath();
-                        entry =  new EntriesAdapter.RecordEntry(0,lecture.getId(),"",
-                                System.currentTimeMillis(),recordName,recordPath);
-                        addEntry();
+                                        File folder = new File(Environment.getExternalStorageDirectory(),"My Guc Records");
+                                        folder.mkdirs();
+                                        String recordName = input.toString();
+                                        String recordPath = Helper.createNewFile(new File(folder.getAbsolutePath(),recordName+".wav"),recordName+".wav").getAbsolutePath();
+                                        entry =  new EntriesAdapter.RecordEntry(0,lecture.getId(),"",
+                                                System.currentTimeMillis(),recordName,recordPath);
+                                        addEntry();
 
-                        AudioRecordService.startRecordingService(EntryActivity.this,recordPath,recordName);
+                                        AudioRecordService.startRecordingService(EntryActivity.this,recordPath,recordName);
 
-//                        Intent recordIntent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-//                        recordIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                        recordIntent.putExtra(EXTRA_MAX_BYTES,180  * 1024L * 1024L); // 3 Hours of streaming
-//                        startActivityForResult(Intent.createChooser(recordIntent,"Choose App"), 0);
+//
+                                    }
+                                }).show();
                     }
                 }).show();
+
+
 
     }
     @Override
@@ -220,7 +255,7 @@ public class EntryActivity extends AppCompatActivity implements View.OnClickList
             for(String path :  mPaths)
             {
                 entry =  new EntriesAdapter.ImageEntry(0,lecture.getSubjectId(),
-                           "",0,path,false);
+                           "",System.currentTimeMillis(),path,false);
                 if(mPaths.size() == 1)
                     addNote(true);
                 else
@@ -303,19 +338,6 @@ public class EntryActivity extends AppCompatActivity implements View.OnClickList
                     .enableDebuggingMode(true)
                     .build();
         }
-        //        build(new PickSetup().setVideo(isVideo).setSystemDialog(true)).setOnPickResult(new IPickResult() {
-//            @Override
-//            public void onPickResult(PickResult pickResult) {
-//                if(pickResult.getError()== null) {
-//                    String path = pickResult.getPath();
-//                    Log.d("AddingImage",path + " " +isVideo);
-//                   entry =  new EntriesAdapter.ImageEntry(0,lecture.getSubjectId(),
-//                           "",0,path,isVideo);
-//                   addNote(true);
-//
-//                }
-//            }
-//        }).show(this);
 
     }
 
@@ -370,11 +392,12 @@ public class EntryActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onEntryDeleted(final EntriesAdapter.Entry entry, final int pos) {
-        entries.remove(pos);
         if(entry.getType() == EntriesAdapter.Entry.TYPE_NOTE)
         {
             fastDelete(dbHelper,entry.getId());
+            entries.remove(pos);
             adapter.notifyItemRemoved(pos);
+
         }
         else
         {
@@ -382,13 +405,14 @@ public class EntryActivity extends AppCompatActivity implements View.OnClickList
                     .title("Deleting media")
                     .content("Are you sure you want to delete this entirely?")
                     .positiveText("Yes")
-                    .negativeText("No,Only from from the app")
+                    .negativeText("No,Only from the app")
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             dialog.dismiss();
                             fastDelete(dbHelper,entry.getId());
                             deepDelete(entry);
+                            entries.remove(pos);
                             adapter.notifyItemRemoved(pos);
                         }
                     })
@@ -397,6 +421,7 @@ public class EntryActivity extends AppCompatActivity implements View.OnClickList
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                             dialog.dismiss();
                             fastDelete(dbHelper,entry.getId());
+                            entries.remove(pos);
                             adapter.notifyItemRemoved(pos);
                         }
                     })

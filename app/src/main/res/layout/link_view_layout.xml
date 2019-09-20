@@ -19,16 +19,19 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:text="Maths"
-           android:textSize="24dp"
+           android:textSize="24sp"
            android:textColor="@android:color/black"
            android:id="@+id/text"
            android:layout_alignParentLeft="true"
            android:layout_toLeftOf = "@+id/fav"
            android:layout_centerVertical="true"
            android:padding="12dp"
-           android:ellipsize="end"
-           android:maxLines="1"
-           />
+           android:ellipsize="middle"
+           android:singleLine="true"
+           app:autoSizeTextType="uniform"
+           app:autoSizeMinTextSize="12sp"
+           app:autoSizeMaxTextSize="100sp"
+           app:autoSizeStepGranularity="2sp"/>
        <com.like.LikeButton
            app:icon_type="heart"
            app:icon_size="24dp"

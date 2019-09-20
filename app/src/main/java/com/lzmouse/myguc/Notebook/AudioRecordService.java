@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.media.MediaRecorder;
 import android.os.Build;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
 
 
 public class AudioRecordService extends IntentService {
+    private static final String CHANNEL = "RECORD_CHANNEL";
     private final int ID = 136; // Sasa and salah suggested it in CS tutorial.
 
     private static final String EXTRA_PATH = "com.lzmouse.gucintranet.Notebook.extra.PATH";
@@ -65,13 +67,14 @@ public class AudioRecordService extends IntentService {
                 final MediaRecorder mRecorder = new MediaRecorder();
                 mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                 mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                mRecorder.setOutputFile(path);
                 mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+                mRecorder.setOutputFile(path);
                 try {
                     mRecorder.prepare();
                 } catch (IOException e) {
                     Log.e("Recording", "prepare() failed");
                 }
+                Log.d("Rec",path);
                 mRecorder.start();
                while (true)
                {
@@ -105,12 +108,28 @@ public class AudioRecordService extends IntentService {
         manager.notify(ID,builder.build());
         stopSelf();
     }
+    public void initChannels() {
+
+        if (Build.VERSION.SDK_INT < 26) {
+            return;
+        }
+        Log.d("Download","Hiii");
+        NotificationManager notificationManager =
+                (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel channel = new NotificationChannel(CHANNEL,
+                "Record audio",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        channel.setDescription("Inform user about recording audio");
+        channel.setImportance(NotificationManager.IMPORTANCE_HIGH);
+        notificationManager.createNotificationChannel(channel);
+    }
     private void setUpNotification()
     {
+        initChannels();
         manager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            builder = new NotificationCompat.Builder(this, NotificationChannel.DEFAULT_CHANNEL_ID);
+            builder = new NotificationCompat.Builder(this, CHANNEL);
         else
             builder = new NotificationCompat.Builder(this);
         Intent intent =  new Intent(getApplicationContext(), AudioBroadCastReciver.class);

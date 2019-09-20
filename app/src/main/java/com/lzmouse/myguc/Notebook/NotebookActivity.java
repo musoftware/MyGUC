@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.lzmouse.myguc.Helper;
@@ -175,28 +176,29 @@ public class NotebookActivity extends AppCompatActivity implements SubjectsAdapt
     @Override
     public void onDeleteClick(final SubjectsAdapter.Subject subject, final int index) {
         if (deleteTask == null) {
-            SweetAlertDialog dialog = new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
-                    .setTitleText("Deep Deleting")
-                    .setContentText("Do you want to delete the files from the phone?")
-                    .setConfirmText("Yes")
-                    .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+            new MaterialDialog.Builder(this)
+                    .title("Deleting " + subject.getName())
+                    .content("Are you sure you want to delete this entirely?")
+                    .positiveText("Yes")
+                    .negativeText("No,Only from the app")
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
                             deleteTask = new DeleteTask(subject.getUid(),index,true);
                             deleteTask.execute();
                         }
                     })
-                    .setCancelButton("No,Only delete from the app", new SweetAlertDialog.OnSweetClickListener() {
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
                             deleteTask = new DeleteTask(subject.getUid(),index,false);
                             deleteTask.execute();
                         }
-                    }).setCancelText("Cancel");
+                    })
+                    .show();
 
-            dialog.show();
         }
     }
     private  class DeleteTask extends AsyncTask<Object,Void,Void>
@@ -210,6 +212,9 @@ public class NotebookActivity extends AppCompatActivity implements SubjectsAdapt
             this.id = id;
             this.isDeep = isDeep;
             this.pos = pos;
+            if(dbHelper == null)
+                dbHelper = new MyGucDatabaseHelper(NotebookActivity.this);
+
         }
         @Override
         protected void onPreExecute() {

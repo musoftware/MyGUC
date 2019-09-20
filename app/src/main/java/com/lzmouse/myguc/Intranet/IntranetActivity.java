@@ -38,51 +38,20 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class IntranetActivity extends AppCompatActivity implements FacultyAdapter.Listener, LinksAdapter.Listener, PathsAdapter.IPathsAdapter {
-    public static final String LINK_EXTRA = "link";
-    private static final String TAG = "AcIntranet";
-    private static final String FACULTIES = "Faculties";
-    private RecyclerView recyclerView;
-    private RecyclerView pathsView;
-    private LinksAdapter linkAdapter;
-    private FacultyAdapter facultyAdapter;
-    private PathsAdapter pathsAdapter;
-    private List<FacultyAdapter.Faculty> faculties;
-    private List<LinksAdapter.Link> links;
-    private List<PathsAdapter.Path> paths;
-    private WebView webView;
-    private boolean isFac,isDownloadMode;
-    private CookieManager cookieManager;
+public class IntranetActivity extends DataActivity implements FacultyAdapter.Listener, LinksAdapter.Listener, PathsAdapter.IPathsAdapter {
 
-    private MyGucDatabaseHelper dpHelper;
-    private ProgressWheel progressWheel;
     private OpenLinkTask openLinkTask;
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intranet);
-        //Initialize lists
-        progressWheel = findViewById(R.id.progress_wheel);
-        faculties = new ArrayList<>();
-        links = new ArrayList<>();
+    private FacultyAdapter facultyAdapter;
+    private WebView webView;
 
-        paths = new ArrayList<>();
-        LinksAdapter.Link defLink = (LinksAdapter.Link) getIntent().getSerializableExtra(LINK_EXTRA);
+    @Override
+    protected void init() {
+        facultyAdapter = new FacultyAdapter(this, this, faculties);
+        recyclerView.setAdapter(facultyAdapter);
+
         if(defLink ==  null)
             fillFaculties();
-        cookieManager = CookieManager.getInstance();
 
-
-        // Creating recycler view
-        recyclerView =  findViewById(R.id.rec);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        facultyAdapter =  new FacultyAdapter(this,this,faculties);
-        linkAdapter =  new LinksAdapter(this,this,links,false);
-        recyclerView.setAdapter(facultyAdapter);
-        pathsAdapter = new PathsAdapter(this,paths);
-        pathsView =  findViewById(R.id.paths);
-        pathsView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
-        pathsView.setAdapter(pathsAdapter);
 
 
         webView = new WebView(this);
@@ -97,11 +66,11 @@ public class IntranetActivity extends AppCompatActivity implements FacultyAdapte
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 if(!isDownloadMode)
-                     view.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                    view.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
                 else
                 {
 
-                    }
+                }
 
             }
 
@@ -121,34 +90,10 @@ public class IntranetActivity extends AppCompatActivity implements FacultyAdapte
             openLink(defLink.getName(),defLink.getLink());
 
         }
-
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        dpHelper =  new MyGucDatabaseHelper(this);
-    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        dpHelper.close();
-    }
-    public void sortLinks()
-    {
-        Collections.sort(links, new Comparator<LinksAdapter.Link>() {
-            @Override
-            public int compare(LinksAdapter.Link link, LinksAdapter.Link t1) {
-                if(link.isFile() == t1.isFile())
-                    return link.getName().compareTo(t1.getName()) ;
-                else if(link.isFile() && !t1.isFile())
-                    return 1;
-                else
-                    return -1;
-            }
-        });
-    }
+
     public void openLink(String name, String path) {
         if(openLinkTask == null) {
             getSupportActionBar().setTitle(name);
@@ -204,7 +149,6 @@ public class IntranetActivity extends AppCompatActivity implements FacultyAdapte
                     Log.d(TAG, "Going to get tags");
 
                     String body = doc.getElementsByTag("pre").first().html();
-
                     String[] lines = body.split("<br>");
                     Log.d(TAG, lines.length + "");
                     IntranetActivity.this.links.clear();
@@ -258,13 +202,7 @@ public class IntranetActivity extends AppCompatActivity implements FacultyAdapte
             linkAdapter.notifyDataSetChanged();
         }
     }
-    private void downloadFile(final LinksAdapter.Link link)
-    {
-        Intent intent = new Intent(this,DownloadService.class);
-        intent.putExtra(DownloadService.EXTRA_URL,link.getLink());
-        intent.putExtra(DownloadService.EXTRA_NAME,link.getName());
-        startService(intent);
-    }
+
 
     @Override
     public void onFacultyClick(FacultyAdapter.Faculty faculty) {
@@ -283,21 +221,7 @@ public class IntranetActivity extends AppCompatActivity implements FacultyAdapte
             downloadFile(link);
     }
 
-    public boolean isLinkFav(String path)
-    {
-        if(dpHelper.getReadableDatabase()!=null)
-        {
-            SQLiteDatabase reader =  dpHelper.getReadableDatabase();
-            Cursor cursor = reader.query(MyGucDatabaseHelper.FAVOURITES_TABLE,
-                    new String[] {MyGucDatabaseHelper.PATH_COL},
-                    MyGucDatabaseHelper.PATH_COL +"=?",
-                    new String[] {path},null,null,null);
-            boolean isFav =  cursor.moveToFirst();
-            cursor.close();
-            return isFav;
-        }
-        return false;
-    }
+
     @Override
     public void onFavStateChanged(LinksAdapter.Link link, boolean newState,int post) {
         Log.d(TAG,"State changed to " + newState);
@@ -329,13 +253,7 @@ public class IntranetActivity extends AppCompatActivity implements FacultyAdapte
         openLink(path.getName(),path.getPath());
     }
 
-    @Override
-    public void onBackPressed() {
-        if(paths.size() > 1)
-            onPathClick(paths.get(paths.size() - 2), paths.size() - 2);
-        else
-            super.onBackPressed();
-    }
+
 
     private void fillFaculties()
     {
