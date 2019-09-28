@@ -10,10 +10,12 @@
         android:roundIcon="@mipmap/ic_lan"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:icon">
+        tools:replace="android:icon"
+        android:usesCleartextTraffic="true"
+        >
         <activity android:name=".Intranet.DataActivity"></activity>
         <activity android:name=".Intranet.MetActivity"
-            android:parentActivityName=".Main.MainActivity"/>
+            android:parentActivityName=".Main.MainActivity" />
         <activity android:name=".Intranet.IETActivity"
             android:parentActivityName=".Main.MainActivity"/>
         <activity
