@@ -13,8 +13,9 @@
     >
 
    <RelativeLayout
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content">
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:orientation="horizontal">
        <TextView
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
@@ -26,12 +27,12 @@
            android:layout_toLeftOf = "@+id/fav"
            android:layout_centerVertical="true"
            android:padding="12dp"
-           android:ellipsize="middle"
-           android:singleLine="true"
+           android:maxLines="1"
            app:autoSizeTextType="uniform"
            app:autoSizeMinTextSize="12sp"
            app:autoSizeMaxTextSize="100sp"
-           app:autoSizeStepGranularity="2sp"/>
+           app:autoSizeStepGranularity="2sp"
+           android:layout_gravity="left"/>
        <com.like.LikeButton
            app:icon_type="heart"
            app:icon_size="24dp"
@@ -39,7 +40,8 @@
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
            android:layout_alignParentRight="true"
-           android:layout_centerVertical="true"/>
+           android:layout_centerVertical="true"
+           android:layout_gravity="right"/>
    </RelativeLayout>
 
 

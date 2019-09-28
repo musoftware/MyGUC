@@ -12,7 +12,10 @@
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
         <activity android:name=".Intranet.DataActivity"></activity>
-        <activity android:name=".Intranet.MetActivity" />
+        <activity android:name=".Intranet.MetActivity"
+            android:parentActivityName=".Main.MainActivity"/>
+        <activity android:name=".Intranet.IETActivity"
+            android:parentActivityName=".Main.MainActivity"/>
         <activity
             android:name=".Main.MainActivity"
             android:theme="@style/AppTheme.BrandedLaunch">

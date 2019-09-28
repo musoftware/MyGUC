@@ -116,7 +116,7 @@ public class LinksAdapter extends RecyclerView.Adapter<LinksAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         Link link = links.get(position);
         holder.name.setText(link.getName());
-        if(!link.isFile() && !(link instanceof ElementalLink) && !(link instanceof Course))
+        if(!link.isFile() && link.getClass().equals(Link.class))
         {
             holder.fav.setVisibility(View.VISIBLE);
             holder.fav.setLiked(link.isFav());

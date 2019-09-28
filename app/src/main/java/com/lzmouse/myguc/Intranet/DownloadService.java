@@ -95,11 +95,23 @@ public class DownloadService extends IntentService {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                final String path = "http://student.guc.edu.eg" +url;
+                Log.d(TAG,url);
+                final String path;
 
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .authenticator(new NTLMAuthenticator(Student.getInstance().getUsername(), Student.getInstance().getPassword()))
-                        .build();
+                OkHttpClient client;
+                if(Student.getInstance()!= null)
+                {
+                    path = "http://student.guc.edu.eg" +url;
+                    client = new OkHttpClient.Builder()
+                            .authenticator(new NTLMAuthenticator(Student.getInstance().getUsername(), Student.getInstance().getPassword()))
+                            .build();
+                }
+                else
+                {
+                    path = url;
+                   client =  new OkHttpClient.Builder()
+                            .build();
+                }
                 Response response = client.newCall(new Request.Builder().url(path).build()).execute();
                 InputStream reader = response.body().byteStream();
                 long len = response.body().contentLength();

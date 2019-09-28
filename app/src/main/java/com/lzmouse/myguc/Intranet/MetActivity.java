@@ -145,30 +145,7 @@ public class MetActivity extends DataActivity {
         }
     }
 
-    private abstract class DataTask<T> extends AsyncTask<T, Void, Void> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            recyclerView.setVisibility(View.GONE);
-            pathsView.setVisibility(View.GONE);
-            progressWheel.setVisibility(View.VISIBLE);
-            links.clear();
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            progressWheel.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
-            pathsView.setVisibility(View.VISIBLE);
-            linkAdapter.notifyDataSetChanged();
-        }
-
-
-
-
-    }
 
     private class StudyGroupTask extends DataTask<String> {
 

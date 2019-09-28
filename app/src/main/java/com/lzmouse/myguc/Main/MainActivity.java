@@ -14,6 +14,7 @@ import com.crashlytics.android.Crashlytics;
 import com.lzmouse.myguc.Helper;
 import com.lzmouse.myguc.Intranet.FavoritesActivity;
 import com.lzmouse.myguc.Intranet.FilesActivity;
+import com.lzmouse.myguc.Intranet.IETActivity;
 import com.lzmouse.myguc.Intranet.IntranetActivity;
 import com.lzmouse.myguc.Intranet.MetActivity;
 import com.lzmouse.myguc.IntroActivity;
@@ -207,8 +208,8 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.Liste
                 i =  new Intent(this, MetActivity.class);
                 break;
             case "IET":
-                i = null;
-                Toast.makeText(this,"Comming soon!",Toast.LENGTH_LONG).show();
+               i  = new Intent(this, IETActivity.class);
+               break;
             default:
                     i = null;
         }

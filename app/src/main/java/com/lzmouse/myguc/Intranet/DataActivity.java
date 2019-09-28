@@ -3,10 +3,12 @@ package com.lzmouse.myguc.Intranet;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 
@@ -120,6 +122,31 @@ public abstract class DataActivity extends AppCompatActivity implements LinksAda
             return isFav;
         }
         return false;
+    }
+
+    protected abstract class DataTask<T> extends AsyncTask<T, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            recyclerView.setVisibility(View.GONE);
+            pathsView.setVisibility(View.GONE);
+            progressWheel.setVisibility(View.VISIBLE);
+            links.clear();
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            progressWheel.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            pathsView.setVisibility(View.VISIBLE);
+            linkAdapter.notifyDataSetChanged();
+        }
+
+
+
+
     }
 
 }

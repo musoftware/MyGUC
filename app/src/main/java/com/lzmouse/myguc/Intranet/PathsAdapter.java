@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.lzmouse.myguc.R;
 
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -117,15 +118,36 @@ public class PathsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             this.showArrow = showArrow;
         }
 
+
         @Override
-        public int hashCode() {
-            return path.hashCode();
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Path path1 = (Path) o;
+            return name.equals(path1.name) &&
+                    path.equals(path1.path);
         }
 
         @Override
-        public boolean equals(Object obj) {
-            return obj instanceof Path && path.equals(((Path)obj).getPath());
+        public int hashCode() {
+            return hashCode(name,path);
         }
+
+        public static int hashCode(Object... a) {
+            if (a == null)
+                return 0;
+
+            int result = 1;
+
+            for (Object element : a)
+                result = 31 * result + (element == null ? 0 : element.hashCode());
+
+            return result;
+        }
+
+
+
+
 
 
 
