@@ -25,8 +25,8 @@ android {
         applicationId "com.lzmouse.myguc"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 7
-        versionName "1.0.5"
+        versionCode 9
+        versionName "1.0.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
@@ -62,7 +62,10 @@ dependencies {
     implementation 'com.github.ohoussein.playpauseview:playpauseview:1.0.2'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'
-    implementation 'agency.tango.android:material-intro-screen:0.0.5'
+    implementation 'org.jsoup:jsoup:1.10.3'
+
+//    implementation 'agency.tango.android:material-intro-screen:0.0.5'
+    implementation 'com.github.thisAAY:material-intro-screen:1f9713eb56'
 
 
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'

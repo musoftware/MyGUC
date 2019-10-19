@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.lzmouse.myguc.Helper;
 import com.lzmouse.myguc.Login.NTLMAuthenticator;
@@ -55,6 +56,7 @@ public class DownloadService extends IntentService {
             new DownloadTask().execute();
         }
     }
+
     public void initChannels() {
         if (Build.VERSION.SDK_INT < 26) {
             return;
